@@ -10,4 +10,4 @@ WORKDIR /code
 COPY --from=requirements-stage /tmp/requirements.txt /code/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 COPY ./celery_intro /code/celery_intro
-CMD ["celery", "-A", "celery_intro", "--loglevel", "INFO"]
+CMD ["celery", "-A", "celery_intro", "worker", "--loglevel", "INFO"]
