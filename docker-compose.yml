@@ -1,0 +1,38 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3.10-alpine
+    container_name: 'rabbitmq'
+    ports:
+      - 5672:5672
+      - 15672:15672
+
+  celery:
+    build: .
+    volumes:
+      - .:/code
+    depends_on:
+      - rabbitmq
+    command:
+      - "celery"
+      - "-A"
+      - "celery_intro"
+      - "worker"
+      - "--loglevel"
+      - "INFO"
+
+  web:
+    build: .
+    volumes:
+      - .:/code
+    depends_on:
+      - celery
+    ports:
+      - "8080:8000"
+    command:
+      - "uvicorn"
+      - "celery_intro.fastapi:app"
+      - "--host"
+      - "0.0.0.0"
+      - "--port"
+      - "8000"
+      - "--reload"
