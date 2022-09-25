@@ -33,6 +33,17 @@ services:
       - "--loglevel"
       - "INFO"
 
+  celery_flower:
+    <<: *celery
+    depends_on:
+      - rabbitmq
+    ports:
+      - "5555:5555"
+    command:
+      - "celery"
+      - "-A"
+      - "celery_intro"
+      - "flower"
 
   web:
     << : *celery
