@@ -17,9 +17,9 @@ def get_my_ip():
 
 
 @app.task(
-    autoretry_for=(Exception, ),
+    autoretry_for=(Exception,),
     retry_kwargs={"max_retries": 3, "default_retry_delay": 5},
-    retry_backoff=True
+    retry_backoff=True,
 )
 def retry_three_times():
     response = requests.get("https://httpbin.org/status/404")

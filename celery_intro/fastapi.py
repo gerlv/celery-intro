@@ -1,6 +1,7 @@
 from time import sleep
 from fastapi import FastAPI
 from celery_intro.tasks import say
+
 app = FastAPI()
 
 

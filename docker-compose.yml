@@ -6,7 +6,8 @@ services:
       - 5672:5672
       - 15672:15672
 
-  celery:
+  celery_worker:
+    &celery
     build: .
     volumes:
       - .:/code
@@ -20,12 +21,23 @@ services:
       - "--loglevel"
       - "INFO"
 
-  web:
-    build: .
-    volumes:
-      - .:/code
+  celery_beat:
+    << : *celery
     depends_on:
-      - celery
+      - rabbitmq
+    command:
+      - "celery"
+      - "-A"
+      - "celery_intro"
+      - "beat"
+      - "--loglevel"
+      - "INFO"
+
+
+  web:
+    << : *celery
+    depends_on:
+      -   celery_worker
     ports:
       - "8080:8000"
     command:
