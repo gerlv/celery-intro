@@ -1,3 +1,4 @@
+import time
 import logging
 import requests
 from celery_intro.celery import app
@@ -18,10 +19,16 @@ def get_my_ip():
 
 @app.task(
     autoretry_for=(Exception,),
-    retry_kwargs={"max_retries": 3, "default_retry_delay": 5},
-    retry_backoff=True,
+    retry_backoff=5,
+    retry_jitter=False,
 )
 def retry_three_times():
     response = requests.get("https://httpbin.org/status/404")
     LOGGER.info(f"Status code: {response.status_code}")
     response.raise_for_status()
+
+
+@app.task
+def slow_process():
+    time.sleep(5)
+    return "All good"

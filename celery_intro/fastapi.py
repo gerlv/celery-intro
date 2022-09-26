@@ -1,6 +1,6 @@
 from time import sleep
 from fastapi import FastAPI
-from celery_intro.tasks import say
+from celery_intro.tasks import say, slow_process, retry_three_times
 
 app = FastAPI()
 
@@ -16,8 +16,15 @@ def schedule_say(message):
     return {"status": "ok"}
 
 
+@app.get("/retry")
+def retry():
+    retry_three_times.delay()
+    return {"retry": True}
+
+
 @app.get("/fast")
 def fast():
+    slow_process.delay()
     return {"good": True}
 
 
